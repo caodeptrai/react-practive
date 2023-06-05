@@ -5,6 +5,10 @@ const fetchUserData = (page) => {
 
 }
 
+const postCreateUser = (name, job) => {
+    return instance.post("/api/users", { name, job })
+}
 
 
-export { fetchUserData }
+
+export { fetchUserData, postCreateUser }

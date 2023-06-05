@@ -3,10 +3,25 @@ import './TableUsers.scss'
 import { useEffect, useState } from 'react'
 import ReactPaginate from 'react-paginate'
 import { fetchUserData } from '../../services/UserServices'
+import ModalsAddNewUser from '../modals/ModalsAddNewUser'
 const TableUsers = () => {
     const [listUser, setListUser] = useState([])
     const [totalUsers, setTotalUsers] = useState(0)
     const [totalPages, setTotalPages] = useState(0)
+
+    const [isShowModalAddNewUser, setIsShowModalAddNewUser] = useState(false)
+
+    const handleClose = () => {
+        setIsShowModalAddNewUser(false)
+    }
+
+    const handleOpen = () => {
+        setIsShowModalAddNewUser(true)
+    }
+
+    const handleUpdateTable = (user) => {
+        setListUser([user, ...listUser])
+    }
     useEffect(() => {
         //call api
         getUser(1);
@@ -32,6 +47,10 @@ const TableUsers = () => {
     };
     return (
         <>
+            <div className='my-3 d-flex justify-content-between align-items-center' >
+                <strong>List User:</strong>
+                <button className='btn btn-success' onClick={handleOpen}>Add new user</button>
+            </div>
             <Table striped bordered hover>
                 <thead>
                     <tr>
@@ -75,6 +94,10 @@ const TableUsers = () => {
                 containerClassName='pagination'
                 activeClassName='active'
             />
+            <ModalsAddNewUser
+                show={isShowModalAddNewUser}
+                handleClose={handleClose}
+                handleUpdateTable={handleUpdateTable} />
         </>
     )
 }
