@@ -4,12 +4,25 @@ import { useEffect, useState } from 'react'
 import ReactPaginate from 'react-paginate'
 import { fetchUserData } from '../../services/UserServices'
 import ModalsAddNewUser from '../modals/ModalsAddNewUser'
+import ModalEditUser from '../modals/ModalsEditUser'
 const TableUsers = () => {
     const [listUser, setListUser] = useState([])
     const [totalUsers, setTotalUsers] = useState(0)
     const [totalPages, setTotalPages] = useState(0)
 
     const [isShowModalAddNewUser, setIsShowModalAddNewUser] = useState(false)
+    const [isShowModalEditUser, setIsShowModalEditUser] = useState(false)
+    const [dataUserEdit, setDataUserEdit] = useState({})
+
+    const handleOpenEditModal = (user) => {
+        setDataUserEdit(user)
+        setIsShowModalEditUser(true)
+
+    }
+
+    const handleCloseEditModal = () => {
+        setIsShowModalEditUser(false)
+    }
 
     const handleClose = () => {
         setIsShowModalAddNewUser(false)
@@ -58,6 +71,7 @@ const TableUsers = () => {
                         <th>First Name</th>
                         <th>Last Name</th>
                         <th>Email</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -68,6 +82,10 @@ const TableUsers = () => {
                                 <td>{item.first_name}</td>
                                 <td>{item.last_name}</td>
                                 <td>{item.email}</td>
+                                <td>
+                                    <button className='btn btn-warning m-2' onClick={() => handleOpenEditModal(item)}>Edit</button>
+                                    <button className='btn btn-danger'>Delete</button>
+                                </td>
                             </tr>
                         )
                     })}
@@ -98,6 +116,10 @@ const TableUsers = () => {
                 show={isShowModalAddNewUser}
                 handleClose={handleClose}
                 handleUpdateTable={handleUpdateTable} />
+            <ModalEditUser
+                show={isShowModalEditUser}
+                handleCloseEditModal={handleCloseEditModal}
+                dataUserEdit={dataUserEdit} />
         </>
     )
 }
