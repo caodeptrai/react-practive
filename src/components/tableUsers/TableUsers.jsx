@@ -5,6 +5,8 @@ import ReactPaginate from 'react-paginate'
 import { fetchUserData } from '../../services/UserServices'
 import ModalsAddNewUser from '../modals/ModalsAddNewUser'
 import ModalEditUser from '../modals/ModalsEditUser'
+import _ from 'lodash'
+import ModalDeleteUser from '../modals/ModalDelete'
 const TableUsers = () => {
     const [listUser, setListUser] = useState([])
     const [totalUsers, setTotalUsers] = useState(0)
@@ -13,9 +15,12 @@ const TableUsers = () => {
     const [isShowModalAddNewUser, setIsShowModalAddNewUser] = useState(false)
     const [isShowModalEditUser, setIsShowModalEditUser] = useState(false)
     const [dataUserEdit, setDataUserEdit] = useState({})
+    const [dataUserDelete, setDataUserDetele] = useState({})
+    const [isShowModalDeleteUser, setIsShowModalDeleteUser] = useState(false)
 
     const handleOpenEditModal = (user) => {
         setDataUserEdit(user)
+        //  handleEditUserFromModal(user)
         setIsShowModalEditUser(true)
 
     }
@@ -26,15 +31,40 @@ const TableUsers = () => {
 
     const handleClose = () => {
         setIsShowModalAddNewUser(false)
+        setIsShowModalDeleteUser(false)
     }
 
     const handleOpen = () => {
         setIsShowModalAddNewUser(true)
     }
 
+
+
+
+    const handleOpenDeleteModal = (user) => {
+        setIsShowModalDeleteUser(true)
+        setDataUserDetele(user)
+
+    }
+
     const handleUpdateTable = (user) => {
         setListUser([user, ...listUser])
     }
+
+    const handleEditUserFromModal = (user) => {
+        let cloneListUser = _.cloneDeep(listUser)
+        let index = listUser.findIndex(item => item.id === user.id)
+        cloneListUser[index].first_name = user.first_name
+        setListUser(cloneListUser)
+    }
+
+    const handleDeleteUserFromModal = (user) => {
+        let cloneListUser = _.cloneDeep(listUser)
+        cloneListUser = cloneListUser.filter(item => item.id !== user.id)
+        setListUser(cloneListUser)
+    }
+
+
     useEffect(() => {
         //call api
         getUser(1);
@@ -84,7 +114,7 @@ const TableUsers = () => {
                                 <td>{item.email}</td>
                                 <td>
                                     <button className='btn btn-warning m-2' onClick={() => handleOpenEditModal(item)}>Edit</button>
-                                    <button className='btn btn-danger'>Delete</button>
+                                    <button className='btn btn-danger' onClick={() => handleOpenDeleteModal(item)}>Delete</button>
                                 </td>
                             </tr>
                         )
@@ -119,7 +149,14 @@ const TableUsers = () => {
             <ModalEditUser
                 show={isShowModalEditUser}
                 handleCloseEditModal={handleCloseEditModal}
-                dataUserEdit={dataUserEdit} />
+                dataUserEdit={dataUserEdit}
+                handleEditUserFromModal={handleEditUserFromModal} />
+            <ModalDeleteUser
+                show={isShowModalDeleteUser}
+                handleClose={handleClose}
+                dataUserDelete={dataUserDelete}
+                handleDeleteUserFromModal={handleDeleteUserFromModal}
+            />
         </>
     )
 }
