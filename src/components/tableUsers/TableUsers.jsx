@@ -5,7 +5,7 @@ import ReactPaginate from 'react-paginate'
 import { fetchUserData } from '../../services/UserServices'
 import ModalsAddNewUser from '../modals/ModalsAddNewUser'
 import ModalEditUser from '../modals/ModalsEditUser'
-import _ from 'lodash'
+import _, { debounce } from 'lodash'
 import ModalDeleteUser from '../modals/ModalDelete'
 const TableUsers = () => {
     const [listUser, setListUser] = useState([])
@@ -17,6 +17,10 @@ const TableUsers = () => {
     const [dataUserEdit, setDataUserEdit] = useState({})
     const [dataUserDelete, setDataUserDetele] = useState({})
     const [isShowModalDeleteUser, setIsShowModalDeleteUser] = useState(false)
+    const [sortBy, setSortBy] = useState("asc")
+    const [sortField, setSortField] = useState("id")
+
+
 
     const handleOpenEditModal = (user) => {
         setDataUserEdit(user)
@@ -37,8 +41,6 @@ const TableUsers = () => {
     const handleOpen = () => {
         setIsShowModalAddNewUser(true)
     }
-
-
 
 
     const handleOpenDeleteModal = (user) => {
@@ -64,6 +66,16 @@ const TableUsers = () => {
         setListUser(cloneListUser)
     }
 
+    const handleSort = (sortBy, sortField) => {
+        setSortBy(sortBy)
+        setSortField(sortField)
+        let cloneListUser = _.cloneDeep(listUser)
+        cloneListUser = _.orderBy(cloneListUser, [sortField], [sortBy]);
+
+        setListUser(cloneListUser)
+
+    }
+
 
     useEffect(() => {
         //call api
@@ -86,21 +98,82 @@ const TableUsers = () => {
     const handlePageClick = (event) => {
         getUser(+event.selected + 1)
 
-
     };
+
+    const handleSearch = debounce((event) => {
+        let term = event.target.value
+        console.log("check seach run...", term)
+        if (term) {
+            let cloneListUser = _.cloneDeep(listUser)
+            cloneListUser = cloneListUser.filter((el) => el.email.toLowerCase().includes(term.toLowerCase()))
+
+            setListUser(cloneListUser)
+        } else {
+            getUser(1)
+        }
+    }, 300)
+
     return (
         <>
             <div className='my-3 d-flex justify-content-between align-items-center' >
                 <strong>List User:</strong>
                 <button className='btn btn-success' onClick={handleOpen}>Add new user</button>
             </div>
+            <div className='col-4 my-3'>
+                <input
+                    className='form-control'
+                    type="search"
+                    placeholder='search user by email...'
+                    // value={keyword}
+                    onChange={(event) => handleSearch(event)}
+                />
+            </div>
             <Table striped bordered hover>
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Email</th>
+                        <th>
+                            <div className='sort-header'>
+                                <span>ID</span>
+                                <span>
+                                    <i className="fa-solid fa-arrow-up"
+                                        onClick={() => handleSort("asc", "id")}
+                                    ></i>
+                                    <i className="fa-solid fa-arrow-down"
+                                        onClick={() => handleSort("desc", "id")}
+                                    ></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th>
+                            <div className='sort-header'>
+                                <span>First Name</span>
+                                <span>
+                                    <i className="fa-solid fa-arrow-up"
+                                        onClick={() => handleSort("asc", "first_name")}
+                                    ></i>
+                                    <i className="fa-solid fa-arrow-down"
+                                        onClick={() => handleSort("desc", "first_name")}
+                                    ></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th>
+                            Last Name
+
+                        </th>
+                        <th>
+                            <div className='sort-header'>
+                                <span>Email</span>
+                                <span>
+                                    <i className="fa-solid fa-arrow-up"
+                                        onClick={() => handleSort("asc", "email")}
+                                    ></i>
+                                    <i className="fa-solid fa-arrow-down"
+                                        onClick={() => handleSort("desc", "email")}
+                                    ></i>
+                                </span>
+                            </div>
+                        </th>
                         <th>Actions</th>
                     </tr>
                 </thead>
