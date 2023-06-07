@@ -5,7 +5,7 @@ import ReactPaginate from 'react-paginate'
 import { fetchUserData } from '../../services/UserServices'
 import ModalsAddNewUser from '../modals/ModalsAddNewUser'
 import ModalEditUser from '../modals/ModalsEditUser'
-import _ from 'lodash'
+import _, { debounce } from 'lodash'
 import ModalDeleteUser from '../modals/ModalDelete'
 const TableUsers = () => {
     const [listUser, setListUser] = useState([])
@@ -19,6 +19,7 @@ const TableUsers = () => {
     const [isShowModalDeleteUser, setIsShowModalDeleteUser] = useState(false)
     const [sortBy, setSortBy] = useState("asc")
     const [sortField, setSortField] = useState("id")
+
 
 
     const handleOpenEditModal = (user) => {
@@ -76,9 +77,6 @@ const TableUsers = () => {
     }
 
 
-
-
-
     useEffect(() => {
         //call api
         getUser(1);
@@ -100,13 +98,35 @@ const TableUsers = () => {
     const handlePageClick = (event) => {
         getUser(+event.selected + 1)
 
-
     };
+
+    const handleSearch = debounce((event) => {
+        let term = event.target.value
+        console.log("check seach run...", term)
+        if (term) {
+            let cloneListUser = _.cloneDeep(listUser)
+            cloneListUser = cloneListUser.filter((el) => el.email.toLowerCase().includes(term.toLowerCase()))
+
+            setListUser(cloneListUser)
+        } else {
+            getUser(1)
+        }
+    }, 300)
+
     return (
         <>
             <div className='my-3 d-flex justify-content-between align-items-center' >
                 <strong>List User:</strong>
                 <button className='btn btn-success' onClick={handleOpen}>Add new user</button>
+            </div>
+            <div className='col-4 my-3'>
+                <input
+                    className='form-control'
+                    type="search"
+                    placeholder='search user by email...'
+                    // value={keyword}
+                    onChange={(event) => handleSearch(event)}
+                />
             </div>
             <Table striped bordered hover>
                 <thead>
