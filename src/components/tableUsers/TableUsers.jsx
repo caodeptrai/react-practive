@@ -17,6 +17,9 @@ const TableUsers = () => {
     const [dataUserEdit, setDataUserEdit] = useState({})
     const [dataUserDelete, setDataUserDetele] = useState({})
     const [isShowModalDeleteUser, setIsShowModalDeleteUser] = useState(false)
+    const [sortBy, setSortBy] = useState("asc")
+    const [sortField, setSortField] = useState("id")
+
 
     const handleOpenEditModal = (user) => {
         setDataUserEdit(user)
@@ -37,8 +40,6 @@ const TableUsers = () => {
     const handleOpen = () => {
         setIsShowModalAddNewUser(true)
     }
-
-
 
 
     const handleOpenDeleteModal = (user) => {
@@ -63,6 +64,19 @@ const TableUsers = () => {
         cloneListUser = cloneListUser.filter(item => item.id !== user.id)
         setListUser(cloneListUser)
     }
+
+    const handleSort = (sortBy, sortField) => {
+        setSortBy(sortBy)
+        setSortField(sortField)
+        let cloneListUser = _.cloneDeep(listUser)
+        cloneListUser = _.orderBy(cloneListUser, [sortField], [sortBy]);
+
+        setListUser(cloneListUser)
+
+    }
+
+
+
 
 
     useEffect(() => {
@@ -97,10 +111,49 @@ const TableUsers = () => {
             <Table striped bordered hover>
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Email</th>
+                        <th>
+                            <div className='sort-header'>
+                                <span>ID</span>
+                                <span>
+                                    <i className="fa-solid fa-arrow-up"
+                                        onClick={() => handleSort("asc", "id")}
+                                    ></i>
+                                    <i className="fa-solid fa-arrow-down"
+                                        onClick={() => handleSort("desc", "id")}
+                                    ></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th>
+                            <div className='sort-header'>
+                                <span>First Name</span>
+                                <span>
+                                    <i className="fa-solid fa-arrow-up"
+                                        onClick={() => handleSort("asc", "first_name")}
+                                    ></i>
+                                    <i className="fa-solid fa-arrow-down"
+                                        onClick={() => handleSort("desc", "first_name")}
+                                    ></i>
+                                </span>
+                            </div>
+                        </th>
+                        <th>
+                            Last Name
+
+                        </th>
+                        <th>
+                            <div className='sort-header'>
+                                <span>Email</span>
+                                <span>
+                                    <i className="fa-solid fa-arrow-up"
+                                        onClick={() => handleSort("asc", "email")}
+                                    ></i>
+                                    <i className="fa-solid fa-arrow-down"
+                                        onClick={() => handleSort("desc", "email")}
+                                    ></i>
+                                </span>
+                            </div>
+                        </th>
                         <th>Actions</th>
                     </tr>
                 </thead>

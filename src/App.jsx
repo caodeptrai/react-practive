@@ -4,7 +4,7 @@ import './App.scss'
 import Header from './components/header/Header'
 import TableUsers from './components/tableUsers/TableUsers'
 
-import 'react-toastify/dist/ReactToastify.css';
+
 
 import { ToastContainer } from 'react-toastify';
 function App() {
