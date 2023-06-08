@@ -7,6 +7,9 @@ import ModalsAddNewUser from '../modals/ModalsAddNewUser'
 import ModalEditUser from '../modals/ModalsEditUser'
 import _, { debounce } from 'lodash'
 import ModalDeleteUser from '../modals/ModalDelete'
+import { CSVLink, CSVDownload } from "react-csv";
+import Papa from 'papaparse'
+import { toast } from 'react-toastify'
 const TableUsers = () => {
     const [listUser, setListUser] = useState([])
     const [totalUsers, setTotalUsers] = useState(0)
@@ -19,6 +22,7 @@ const TableUsers = () => {
     const [isShowModalDeleteUser, setIsShowModalDeleteUser] = useState(false)
     const [sortBy, setSortBy] = useState("asc")
     const [sortField, setSortField] = useState("id")
+    const [dataExport, setDataExport] = useState([])
 
 
 
@@ -113,11 +117,96 @@ const TableUsers = () => {
         }
     }, 300)
 
+    const getUsersExport = (event, done) => {
+        let result = []
+        if (listUser && listUser.length > 0) {
+            result.push(["ID", "First name", "Last name", "Email"]);
+            listUser.map((item) => {
+                let arr = []
+                arr[0] = item.id;
+                arr[1] = item.first_name;
+                arr[2] = item.last_name;
+                arr[3] = item.email;
+
+                result.push(arr);
+            })
+
+            setDataExport(result)
+            done();
+        }
+    }
+
+    const handleImportCSV = (event) => {
+
+        if (event.target && event.target.files && event.target.files[0]) {
+
+            let file = event.target.files[0];
+
+            if (file.type !== "text/csv") {
+                toast.error("Vui lòng chọn đúng kiểu định dạng");
+                return;
+            }
+
+            // Parse local CSV file
+            Papa.parse(file, {
+                // header: true,
+                complete: function (results) {
+                    let rawCSV = results.data;
+                    if (rawCSV.length > 0) {
+                        if (rawCSV[0] && rawCSV[0].length === 3) {
+                            if (rawCSV[0][0] !== "first_name" || rawCSV[0][1] !== "last_name" || rawCSV[0][2] !== "email") {
+                                toast.error("wrong fomat header CSV file!")
+                            } else {
+                                let result = [];
+                                rawCSV.map((item, index) => {
+                                    if (index > 0 && item.length === 3) {
+                                        let obj = {};
+                                        obj.first_name = item[0]
+                                        obj.last_name = item[1]
+                                        obj.email = item[2]
+
+                                        result.push(obj)
+                                    }
+                                })
+
+                                setListUser(result)
+                            }
+                        } else {
+                            toast.error("Wrong format CSV file!")
+                        }
+                    } else {
+                        toast.error("not found data on CSV file!")
+                    }
+
+                }
+            });
+        }
+
+
+    }
+
+
     return (
         <>
             <div className='my-3 d-flex justify-content-between align-items-center' >
                 <strong>List User:</strong>
-                <button className='btn btn-success' onClick={handleOpen}>Add new user</button>
+                <div>
+                    <label htmlFor="test" className='btn btn-warning'>Import</label>
+                    <input id='test' type="file" hidden onChange={(event) => handleImportCSV(event)} />
+
+                    <CSVLink
+                        data={dataExport}
+                        filename={"my-file.csv"}
+                        className="btn btn-primary mx-2"
+
+                        asyncOnClick={true}
+                        onClick={getUsersExport}
+                    >Export</CSVLink>
+
+                    {/* <CSVDownload data={csvData} target="_blank" /> */}
+                    <button className='btn btn-success ' onClick={handleOpen}>Add new user</button>
+                </div>
+
             </div>
             <div className='col-4 my-3'>
                 <input
