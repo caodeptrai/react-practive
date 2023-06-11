@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import './Login.scss'
 import { loginApi } from '../../services/UserServices'
 import { toast } from 'react-toastify'
 import { useNavigate } from "react-router-dom";
+import { UserContext } from '../../contexts/UserContext';
 
 const Login = () => {
     const [isShowPassword, setIsShowPassword] = useState(false)
@@ -11,14 +12,14 @@ const Login = () => {
     const [loading, setLoading] = useState(false)
 
     const navigate = useNavigate();
-
+    const { loginContext } = useContext(UserContext)
 
     useEffect(() => {
         let token = localStorage.getItem("token")
         if (token) {
             navigate("/")
         }
-    }, [])
+    }, [navigate])
 
 
     const handleLogin = async () => {
@@ -28,9 +29,10 @@ const Login = () => {
             return
         }
         setLoading(true)
-        let res = await loginApi(email, password)
+        let res = await loginApi(email.trim(), password)
         if (res && res.token) {
-            localStorage.setItem("token", res.token)
+            loginContext(email, res.token)
+
             navigate("/")
         } else {
             //error 
@@ -41,6 +43,12 @@ const Login = () => {
 
         setLoading(false)
 
+    }
+
+    const handlePressEnter = (event) => {
+        if (event && event.key === 'Enter') {
+            handleLogin()
+        }
     }
 
 
@@ -62,6 +70,7 @@ const Login = () => {
                         placeholder="Enter your password"
                         value={password}
                         onChange={(event) => setPassword(event.target.value)}
+                        onKeyDown={(event) => handlePressEnter(event)}
                     />
                     <i className={isShowPassword === true ? 'password-icon fa-regular fa-eye-slash' : 'password-icon fa-regular fa-eye'} onClick={() => setIsShowPassword(!isShowPassword)}></i>
                     {/* {

@@ -188,7 +188,7 @@ const TableUsers = () => {
 
     return (
         <>
-            <div className='my-3 d-flex justify-content-between align-items-center' >
+            <div className='my-3 d-sm-flex justify-content-between align-items-center' >
                 <strong>List User:</strong>
                 <div>
                     <label htmlFor="test" className='btn btn-warning'>Import</label>
@@ -208,7 +208,7 @@ const TableUsers = () => {
                 </div>
 
             </div>
-            <div className='col-4 my-3'>
+            <div className='col-12 col-sm-5 col-xl-4 my-3'>
                 <input
                     className='form-control'
                     type="search"
@@ -217,74 +217,77 @@ const TableUsers = () => {
                     onChange={(event) => handleSearch(event)}
                 />
             </div>
-            <Table striped bordered hover>
-                <thead>
-                    <tr>
-                        <th>
-                            <div className='sort-header'>
-                                <span>ID</span>
-                                <span>
-                                    <i className="fa-solid fa-arrow-up"
-                                        onClick={() => handleSort("asc", "id")}
-                                    ></i>
-                                    <i className="fa-solid fa-arrow-down"
-                                        onClick={() => handleSort("desc", "id")}
-                                    ></i>
-                                </span>
-                            </div>
-                        </th>
-                        <th>
-                            <div className='sort-header'>
-                                <span>First Name</span>
-                                <span>
-                                    <i className="fa-solid fa-arrow-up"
-                                        onClick={() => handleSort("asc", "first_name")}
-                                    ></i>
-                                    <i className="fa-solid fa-arrow-down"
-                                        onClick={() => handleSort("desc", "first_name")}
-                                    ></i>
-                                </span>
-                            </div>
-                        </th>
-                        <th>
-                            Last Name
+            <div className="table-responsive">
 
-                        </th>
-                        <th>
-                            <div className='sort-header'>
-                                <span>Email</span>
-                                <span>
-                                    <i className="fa-solid fa-arrow-up"
-                                        onClick={() => handleSort("asc", "email")}
-                                    ></i>
-                                    <i className="fa-solid fa-arrow-down"
-                                        onClick={() => handleSort("desc", "email")}
-                                    ></i>
-                                </span>
-                            </div>
-                        </th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {listUser && listUser.length > 0 && listUser.map((item) => {
-                        return (
-                            <tr key={item.id}>
-                                <td>{item.id}</td>
-                                <td>{item.first_name}</td>
-                                <td>{item.last_name}</td>
-                                <td>{item.email}</td>
-                                <td>
-                                    <button className='btn btn-warning m-2' onClick={() => handleOpenEditModal(item)}>Edit</button>
-                                    <button className='btn btn-danger' onClick={() => handleOpenDeleteModal(item)}>Delete</button>
-                                </td>
-                            </tr>
-                        )
-                    })}
+                <Table striped bordered hover>
+                    <thead>
+                        <tr>
+                            <th>
+                                <div className='sort-header'>
+                                    <span>ID</span>
+                                    <span>
+                                        <i className="fa-solid fa-arrow-up"
+                                            onClick={() => handleSort("asc", "id")}
+                                        ></i>
+                                        <i className="fa-solid fa-arrow-down"
+                                            onClick={() => handleSort("desc", "id")}
+                                        ></i>
+                                    </span>
+                                </div>
+                            </th>
+                            <th>
+                                <div className='sort-header'>
+                                    <span>First Name</span>
+                                    <span>
+                                        <i className="fa-solid fa-arrow-up"
+                                            onClick={() => handleSort("asc", "first_name")}
+                                        ></i>
+                                        <i className="fa-solid fa-arrow-down"
+                                            onClick={() => handleSort("desc", "first_name")}
+                                        ></i>
+                                    </span>
+                                </div>
+                            </th>
+                            <th>
+                                Last Name
+
+                            </th>
+                            <th>
+                                <div className='sort-header'>
+                                    <span>Email</span>
+                                    <span>
+                                        <i className="fa-solid fa-arrow-up"
+                                            onClick={() => handleSort("asc", "email")}
+                                        ></i>
+                                        <i className="fa-solid fa-arrow-down"
+                                            onClick={() => handleSort("desc", "email")}
+                                        ></i>
+                                    </span>
+                                </div>
+                            </th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {listUser && listUser.length > 0 && listUser.map((item) => {
+                            return (
+                                <tr key={item.id}>
+                                    <td>{item.id}</td>
+                                    <td>{item.first_name}</td>
+                                    <td>{item.last_name}</td>
+                                    <td>{item.email}</td>
+                                    <td>
+                                        <button className='btn btn-warning m-2' onClick={() => handleOpenEditModal(item)}>Edit</button>
+                                        <button className='btn btn-danger' onClick={() => handleOpenDeleteModal(item)}>Delete</button>
+                                    </td>
+                                </tr>
+                            )
+                        })}
 
 
-                </tbody>
-            </Table>
+                    </tbody>
+                </Table>
+            </div>
             <ReactPaginate
                 breakLabel="..."
                 nextLabel="next >"

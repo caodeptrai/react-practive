@@ -6,12 +6,16 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { BrowserRouter } from "react-router-dom";
+import { UserProvider } from './contexts/UserContext.jsx';
+
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
+      <UserProvider>
 
-      <App />
+        <App />
+      </UserProvider>
     </BrowserRouter>
   </React.StrictMode>,
 )
