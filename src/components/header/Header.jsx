@@ -4,22 +4,33 @@ import logo from '../../assets/react.svg'
 import './Header.scss'
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
-import { useContext } from 'react';
-import { UserContext } from '../../contexts/UserContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { handleLogoutRedux } from '../../redux/actions/userAction';
+import { useEffect } from 'react';
+
 
 
 
 const Header = () => {
-    const { logout, user } = useContext(UserContext)
+
+    const user = useSelector(state => state.user.account)
 
     const navigate = useNavigate()
+    const dispatch = useDispatch();
 
     const handleLogout = () => {
-        logout()
-        navigate("/")
-        toast.success("log out success!!")
+
+        dispatch(handleLogoutRedux())
 
     }
+
+    useEffect(() => {
+
+        if (user && user.auth === false && window.location.pathname !== '/login') {
+            navigate("/")
+            toast.success("log out success!!")
+        }
+    }, [user])
 
     console.log("check user", user)
     return (
